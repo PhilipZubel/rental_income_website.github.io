@@ -1,0 +1,136 @@
+{% extends 'calculator/base.html' %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+
+{% for trans in transactions%}
+	<!-- Modal -->
+	<div class="modal fade" id="MyModal{{trans.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<h6 class="pb-2">for:  {{trans}}</h6>
+	      	<h6>comment:  <strong>{{trans.comments}}</strong></h6>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+{% endfor %}
+
+
+
+<h2 class="text-center font-weight-bolder py-2"> All Transactions </h2>
+
+<div class="row pb-4">
+<a type="button" class="btn btn-outline-info btn-block" href="{% url 'rentalunit-create' %}">Add a Rental Unit</a>
+</div>
+
+
+<div class="py-2">
+		<form method="get">
+			<div class="row">
+				<div class = "col col-5">
+					<div class="input-group mb-1">
+					  <div class="input-group-prepend">
+					    <span class="input-group-text" id="basic-addon1">
+					    	Select date from:
+					    </span>
+					  </div>
+					  {% render_field myFilter.form.date_from class="form-control" placeholder="YYYY-MM-DD"%}
+					</div>
+				</div>
+
+				<div class = "col col-5">
+					<div class="input-group mb-1">
+					  <div class="input-group-prepend">
+					    <span class="input-group-text" id="basic-addon1">
+					    	Select date to:
+					    </span>
+					  </div>
+					  {% render_field myFilter.form.date_to class="form-control" placeholder="YYYY-MM-DD"%}
+					</div>
+				</div>
+
+				<div class = "col col-1">
+					<button class="btn btn-primary" type="submit">Search</button>
+				</div>
+			</div>
+
+		</form>
+</div>
+
+
+<!-- table-->
+	<table class="table table-hover">
+	  <thead>
+	    <tr>
+	      <th scope="col" class= text>#</th>
+	      <th scope="col" class= text>Rental Unit</th>
+	      <th scope="col" class= text>Transaction type</th>
+	      <th scope="col" class= text-center>Amount</th>
+	      <th scope="col" class= text-center>Date</th>
+	      <th scope="col" class= text-center>Comments</th>
+	      <th scope="col" class= text>PDF</th>
+	      <th scope="col" class= text>Remove</th>
+	    </tr>
+	  </thead>
+	  
+	  <tbody>
+	  {% for trans in transactions%}
+	  	<tr>
+
+	  	</tr>
+	  		<th scope="row">{{ forloop.counter}}</th>
+	  		<td class="text">{{trans.rental_unit_id}}</th>
+
+	    	{% if trans.transaction_type == "R"%}
+	      		<td class="text-success">{{trans.get_transaction_type_display}}</td>
+	      		<td class="text-success text-center">{{trans.amount}}</td>
+	      	{% else %}
+	      		<td class="text-danger">{{trans.get_transaction_type_display}}</td>
+	      		<td class="text-danger text-center">{{trans.amount}}</td>
+	      	{% endif %}
+
+	      	<td class="text-center">{{trans.transaction_date}}</td>
+
+			<!-- Comment button trigger modal -->
+			{% if trans.comments != "-"%}
+				<td class="text-center">
+					<button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#MyModal{{trans.id}}">View
+					</button>
+				</td>
+			{% else %}
+				<td class="text-center">-----</td>
+			{% endif %}
+
+	      	{% if trans.pdf_file %}
+	      		<td><a href="{{trans.pdf_file.url}}" target="_blank">
+	      			<svg class="bi bi-file-earmark-minus text-secondary text-center" width="2em" height="2em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  					<path d="M9 1H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h5v-1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h5v2.5A1.5 1.5 0 0 0 10.5 6H13v2h1V6L9 1z"/>
+  					<path fill-rule="evenodd" d="M11 11.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+					</svg>
+				</a></td>
+	      	{% else %}
+	      		<td class="text">-----</td>
+	      	{% endif %}
+
+	      	<td><a class="btn btn-secondary" href="{% url 'transaction-delete' trans.pk %}">delete</a></td>
+	    </tr>	    
+	    
+	  {% endfor %}
+	  </tbody>
+
+	</table>
+{% endblock content %}
+
+

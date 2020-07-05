@@ -1,0 +1,185 @@
+{% extends 'calculator/base.html' %}
+
+{% load calculator_extras %}
+
+{% block content %}
+
+<div class="pb-3 text-center">
+	<h4>
+	Report for
+	<strong>{% if rental%}{{rental}}{%else%}all rental units{%endif%}</strong>
+	in
+	<strong>{{this_year}}</strong>
+	:
+	</h4>
+</div>
+
+
+<div class='row'>
+	<div class="col offset-1 col-6">
+		<div class="mb-2">
+			<div class='row'>
+				<!-- select year dropdown-->
+				<div class="col col-4">
+					<div class="dropdown">
+					  <a class="btn btn-outline-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    Select rental unit
+					  </a>
+					  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					  	<a class="dropdown-item" href="{% url 'calculator-report' this_year %}">All</a>
+					  	{%for ru in rental_units%}
+					    <a class="dropdown-item" href="{% url 'calculator-report' this_year ru.pk %}">{{ru}}</a>
+					    {% endfor %}
+					  </div>
+					</div>
+				</div>
+				<!-- select year dropdown-->
+				<div class="col offset-5 col-3">
+					<div class="dropdown">
+					  <a class="btn btn-outline-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    Select year
+					  </a>
+					  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					  	{%for year in years%}
+					    <a class="dropdown-item" href="{% url 'calculator-report' year %}">{{year}}</a>
+					    {% endfor %}
+					  </div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+
+
+		<!-- table-->
+		<table class="table table-hover  table-sm">
+		  <thead>
+		    <tr>
+		      <th scope="col" class= "text">Month</th>
+		      <th scope="col" class= "text text-right">Revenues</th>
+		      <th scope="col" class= "text text-right">Expenses</th>
+		      <th scope="col" class= "text text-right">Total</th>
+		    </tr>
+		  </thead>
+		  
+		  <tbody>
+		  {% for row in transactions_years|get_value:this_year %}  
+		    <tr>
+	    		<td class="text">{{months|get_value_by_index:forloop.counter0}}</td>
+	    		{% if row.0 > 0 %}
+		    		<td class="text text-success text-right">{{row.0|floatformat:2}}</td>
+	    		{% else %}
+	    			<td class="text text-right">{{row.0|floatformat:2}}</td>
+    			{% endif %}
+
+	    		{% if row.1 < 0 %}
+	    			<td class="text text-danger text-right">{{row.1|floatformat:2}}</td>
+	    		{% else %}
+	    			<td class="text text-right">{{row.1|floatformat:2}}</td>
+	    		{% endif %}
+
+	    		{% if row.2 > 0 %}
+		    		<td class="text text-success text-right">{{row.2|floatformat:2}}</td>
+	    		{% elif row.2 < 0  %}
+	    			<td class="text text-danger text-right">{{row.2|floatformat:2}}</td>
+	    		{% else %}
+	    			<td class="text text-right">{{row.2|floatformat:2}}</td>
+	    		{% endif %}
+		    </tr>	    
+		  {% endfor %}
+		  	<tr>
+		  		<td class="text"><h6><strong>Total:</strong></h6></td>
+	    	{% for value in transactions_years_total|get_value:this_year %}
+	    		{% if value > 0 %}
+	    		<td class="text text-right"><h6 ><strong class="text-success">{{value|floatformat:2}}</strong></h6></td>
+	    		{% elif value < 0 %}
+	    		<td class="text text-right"><h6 ><strong class="text-danger">{{value|floatformat:2}}</strong></h6></td>
+	    		{% else %}
+	    		<td class="text text-right"><h6><strong>{{value|floatformat:2}}</strong></h6></td>
+	    		{% endif %}
+	    	{% endfor %}
+	    	</tr>	
+
+
+		  </tbody>
+		</table>
+	</div>
+	<div class="col col-5 my-2">
+		<div class="mx-auto" style="width: 200px;">
+			{% if rental %}
+				<div class="pb-3">
+					<div class="card" style="width: 16rem">
+					  <div class="card-body mb-1">   
+					  	<h6 class="card-title my-2 text-center text-dark">
+					    	Info about this rental unit:
+					    </h6>
+					    <h6 class="card-title my-2 text-center text-dark">
+					    	Type: {{rental.get_rental_unit_type_display}}
+					    </h6>
+					    <h6 class="card-title my-2 text-center text-dark">
+					    	ZIP: {{rental.address_zip_code}}
+					    </h6>
+					    <h6 class="card-title my-1 text-center text-dark">
+					    	Address: 
+					    </h6>
+					    <h6 class="card-title my-1 text-center text-dark">
+					    	{{rental.get_address}}
+					    </h6>
+					  </div>
+					</div>
+				</div>
+
+				<div class="pb-3">
+					<div class="card" style="width: 16rem">
+					  <div class="card-body my-3">   
+					    <h6 class="card-subtitle my-2 text-dark text-center">Total profit for {{rental}}:</h6>
+					    <h3 class="card-title my-1 text-center text-dark">{{this_total_profit|floatformat:2}}</h3>
+					  </div>
+					</div>
+				</div>
+				<div class="pb-3">
+					<div class="card" style="width: 16rem">
+					  <div class="card-body my-3">   
+					    <h6 class="card-subtitle my-3 text-dark text-sm text-center">Number of transactions for {{rental}}:</h6>
+					    <h3 class="card-title my-1 text-center text-dark">{{rental_units_count}}</h3>
+					  </div>
+					</div>
+				</div>
+
+			{% else %}	
+				<div class="pb-4">
+					<div class="card" style="width: 16rem">
+					  <div class="card-body my-3">   
+					    <h6 class="card-subtitle my-3 text-dark text-center">Total profit:</h6>
+					    <h3 class="card-title my-1 text-center text-dark">{{total_profit|floatformat:2}}</h3>
+					  </div>
+					</div>
+				</div>
+				<div class="pb-4">
+					<div class="card" style="width: 16rem">
+					  <div class="card-body my-3">   
+					    <h6 class="card-subtitle my-3 text-dark text-center">Total number of rental units:</h6>
+					    <h3 class="card-title my-1 text-center text-dark">{{rental_units_count}}</h3>
+					  </div>
+					</div>
+				</div>
+
+				<div class="pb-4">
+					<div class="card" style="width: 16rem">
+					  <div class="card-body my-3">   
+					    <h6 class="card-subtitle mt-1 mb-3 text-dark text-center">Total number of transactions:</h6>
+					    <h3 class="card-title my-1 text-center">{{transactions_count}}</h3>
+					  </div>
+					</div>
+				</div>
+			{% endif%}
+		</div>
+
+		
+		
+	</div>
+</div>
+
+	
+
+{% endblock content %}
