@@ -6,8 +6,8 @@ The user is able to add/delete rental units, add/delete transactions correspindi
 month or year.
 
 Technologies used: <br>
-This application is based on the Django framework. This framework offers a file storage system and filters which have been used to store pdf files and select transactions by giving a range of dates. <br>
-HTML, CSS and bootstrap were the front-end technologies used in this project.
+This application is based on the Django framework. This framework offers a file storage system and filters which have been used to store pdf files and to select transactions by a range of dates. <br>
+HTML, CSS and Bootstrap were the front-end technologies used in this project.
 
 ![Screenshot](renatlincomecalculator_img.PNG)
 
