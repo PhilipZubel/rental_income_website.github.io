@@ -1,7 +1,7 @@
 # rental_income_website.github.io <br>
 "# rentalIncomeCalculator" <br>
 Aim of the application: <br>
-With this application a user is able to sign up and log in to their account where they can view their income and expenses for the units they rent.
+With this application a user is able to sign up and log in to their account where they can view the income and expenses for the units they rent.
 The user is able to add/delete rental units, add/delete transactions correspinding to their rental units, view their expenses and check the amount earned in a chosen 
 month or year.
 
